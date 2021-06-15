@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Quiz_Records{% endblock %}
+
+{% block content %} 
+
+<div class="container" style="margin-left: 0;">
+  <h3><a href="/quiz_records">QuizRecords</a></h3>
+  <p>
+      This page is used to manage the QuizRecords table. 
+	<ul>
+	  <li>Normally, the information of this table should come from the customer facing website, but admins can manually insert the result of a quiz. </li>
+	  <li>Each time a user took a quiz, results of that quiz will be inserted into this table.</li>
+      <li>On this page, the admin staff can insert a quiz record into the table, search for a particular quiz result as well, and delete a record from the table. </li>
+	</ul>
+  </p>   
+</div>
+
+<div>
+<form class="container" action="/api/quiz_records/add" method="POST" style="margin-left: 0;">
+    <div>
+        <h4>Add a Quiz record Manually</h4>
+    </div>
+	
+    <div class="form-group">
+	 <label>User ID</label>	    
+	   	 <select name="quiz_user_id" action="/quiz_records">
+			    <option value=''>None</option>
+			{% for id in id_list %}
+			    <option value="{{id[0]}}" SELECTED>{{id[0]}} ({{id[1]}}'s ID)</option>
+			{% endfor %}
+		 </select>
+    </div>
+	
+    <div class="form-group">
+        <label>Quiz Date</label> 
+        <input class="form-control" type="date" name="quiz_date">
+    </div>
+		
+    <div class="form-group">
+	 <label>Quiz State</label>	    
+	   	 <select name="quiz_state">			
+			    <option value="California" SELECTED>California</option>	
+			    <option value="Oregon" SELECTED>Oregon</option>
+		 </select>
+    </div>
+	
+    <div class="form-group">
+        <label>Quiz Score (Choose a value between 0 and 100)</label> 
+        <input class="form-control" type="number" name="quiz_score">
+    </div>
+    <input class="btn btn-primary" type="submit" value="Add">
+</form>
+</div>
+<br>
+
+{% with messages = get_flashed_messages() %}
+	{% if messages %}
+		{% for msg in messages %}
+			<h5 class="container-fluid" id="flash">{{msg}}</h5>
+		{% endfor %}
+	{% endif %}
+{% endwith %}
+
+<br>
+<div class="container-fluid">
+<h4>Current list of quiz records</h4>
+<table class="container" class="table table-striped" style="margin-left: 0;">
+  <thead>
+    <tr>
+      <th scope="col">Quiz ID#</th>
+      <th scope="col">User ID#</th>
+      <th scope="col">Quiz Date</th>
+      <th scope="col">Quiz State</th>
+      <th scope="col">Quiz Score</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in results %}
+    <tr>
+      <th scope="row">{{item[0]}}</th>
+      <td>{{item[1]}}</td>
+      <td>{{item[2]}}</td>
+      <td>{{item[3]}}</td>
+      <td>{{item[4]}}</td>  
+      <td> <input class="btn btn-primary" type="submit" name='Update' value='Update' onclick="window.location = '/api/quiz_records/update/{{item[0]}}'"> </td>
+      <td> <input class="btn btn-primary" type="submit" name='Delete' value='Delete' onclick="window.location = '/api/quiz_records/delete/{{item[0]}}'"> </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+<br>
+
+<br>
+<div class="container-fluid">
+<form class="container2" action="/quiz_records" method="GET" class="form-inline my-2 my-lg-0" style="margin-left: 0;">
+  <div>
+    <h4>Search for Quiz records by state</h4>	
+  </div>
+  <div class="form-group">
+          <label>State</label> 
+          <select name="select_state" id="state">
+	    <option>Default (no filter)</option>
+            <option>California</option>
+            <option>Oregon</option>
+          </select>
+  </div>
+  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>	
+</form>
+</div>
+<br>
+
+{% endblock %}

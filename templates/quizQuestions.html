@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block title %}QuizQuestions{% endblock %}
+
+{% block content %} 
+<div class="container" style="margin-left: 0;">
+  <h3><a href="/quiz_questions">QuizQuestions</a></h3>
+  <p>
+      This page is used to manage the QuizQuestions table. 
+      <ul>
+        <li>Normally, the data of this table comes from the customer facing website. Each time a user took a quiz, questions of that quiz will be inserted into this table.</li>
+        <li hidden>On this page, the admin staff can check the detail of a particular quiz.</li>
+        <li hidden>Also, for the purpose of statistic, they can calculate the accuracy of each question.</li>
+        <li>Sometimes answers provided were wrong or the system was down, the admin can manually add/update/delete some records and the users' scores will be changed too. </li>
+      </ul>   
+  </p>   
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg">
+      <form class="container" style="margin-left: 0;">
+        <div>
+            <h4>Add a Question from a Quiz Manually</h4>
+        </div>
+        <div class="form-group">
+          <label>Quiz ID: </label>
+          <select id="quiz_id">
+            <option disabled="true" selected> --Select Quiz ID--</option>
+            {% for quiz_id in quiz_ids %}
+            <option >{{quiz_id[0]}}</option>
+            {% endfor %}
+          </select> 
+          <!-- <input class="form-control" type="text" id="quiz_id"> -->
+        </div>
+        <div class="form-group">
+            <label>Question ID: </label> 
+            <select id="question_id">
+              <option disabled="true" selected> --Select Question ID--</option>
+              {% for question_id in question_ids %}
+              <option >{{question_id[0]}}</option>
+              {% endfor %}
+            </select>
+            <!-- <input class="form-control" type="text" id="question_id"> -->
+        </div>
+        <div class="form-group">
+            <label>Result:</label> 
+            <select id="result">
+              <option value="1">Correct</option>
+              <option value="0">Wrong</option>
+            </select>
+        </div>
+        <input class="btn btn-primary" type="button" value="Add" id="add-quiz-question">
+      </form>
+    </div>
+    <!-- <div class="col-lg">
+      <div>
+        <h4>Look Up a Quiz Detail</h4>
+      </div>
+      <div>
+        <form>
+          <label>Quiz_ID: <input class="form-control" type="text" name="quiz_id"></label>
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+        </form>
+      </div> 
+    </div> -->
+  </div>
+</div>
+<br>
+<div class="container-fluid"><p id="error-message"></p></div>
+
+<br>
+<br>
+<!-- Table to display the add/search result -->
+<div class="container-fluid">
+  <h4>Here is the Add/Search Result</h4>
+  <table class="container" class="table table-striped" style="margin-left: 0;">
+      <thead>
+      <tr>
+          <th scope="col">ID#</th>
+          <th scope="col">Quiz ID</th>
+          <th scope="col">Question ID</th>
+          <th scope="col">Result</th>
+          <th scope="col">Action</th>
+      </tr>
+      </thead>
+      <tbody id="quiz-question-table">
+      </tbody>
+  </table>
+</div>
+
+{% raw %}
+<template id="quiz-question-template">
+    <tr>
+        <th scope="row">{{id}}</th>
+        <th scope="row">{{quiz_id}}</th>
+        <th scope="row">{{question_id}}</th>
+        <td>
+          <span class="noedit result">{{result}}</span>
+          <select class="edit result">
+            <option value="1">Correct</option>
+            <option value="0">Wrong</option>
+          </select>
+        </td>
+        <td>
+            <input class="btn btn-primary noedit" type="button" value="Delete" itemid="{{id}}" id="delete-this">
+            <input class="btn btn-primary noedit" type="button" value="Edit" itemid="{{id}}" id="edit-this">
+            <input class="btn btn-primary edit" type="button" value="Save" itemid="{{id}}" id="save-edit-this">
+            <input class="btn btn-primary edit" type="button" value="Cancel" itemid="{{id}}" id="cancel-edit-this">
+        </td>
+    </tr>
+</template>
+{% endraw %}
+
+<script src=" {{ url_for('static', filename='quizQuestions.js') }}"></script>
+
+
+
+<br>
+<br>
+
+<!-- <div class="container" class="form-inline my-2 my-lg-0" style="margin-left: 0;">
+  <div>
+    <h4>Calculate Accuracy of Questions</h4>
+  </div>
+  <div class="row">
+    <div class="col-sm">
+      <form action="/api/quiz_questions/statistic" method="GET">
+        <label>Select by Question ID: <input class="form-control" type="text" name="ques_id"></label>
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+      </form> 
+    </div>
+    <div class="col-sm">
+      <form action="/api/quiz_questions/statisticy" method="GET">
+        <label>Select All Questions: </label>
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Select All</button>
+      </form>
+    </div> 
+  </div> 
+</div> -->
+<br>
+
+<!-- Table to display the accuracy result -->
+<!-- <div class="container-fluid">
+  <h4>The ACCURACY RESULT </h4>
+  <table class="container" class="table table-striped" style="margin-left: 0;">
+      <thead>
+      <tr>
+          <th scope="col">Question ID</th>
+          <th scope="col">Total_score</th>
+          <th scope="col">Frequency</th>
+          <th scope="col">Accuracy(%)</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for data in accuracy %}
+      <tr>
+          <th scope="row">{{data[0]}}</th>
+          <td>{{data[1]}}</td>
+          <td>{{data[2]}}</td>
+          <td>{{data[3]*100}}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+  </table>
+</div> -->
+<br>
+<br>
+
+
+<!-- This is the Delete area -->
+<!-- <form class="container" class="form-inline my-2 my-lg-0" style="margin-left: 0;">
+  <div>
+    <h4>Delete Data from the Database</h4>
+  </div>
+  <div>
+    <label>Select time from: <input class="form-control" type="date" name="start_date"></label>
+    <label>to: <input class="form-control" type="date" name="end_date"></label>
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Submit</button>
+  </div>  
+</form> -->
+<br>
+<br>
+<br>
+
+{% endblock %}
